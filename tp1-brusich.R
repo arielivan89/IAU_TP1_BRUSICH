@@ -7,12 +7,17 @@ head(obras_registradas)
 ##Me interesa trabajar con demoliciones para saber cual es el promedio por comuna. 
 ##Como las columnas de tipo de obra y comuna son del tipo "character" las convertire en factor para poder identificarlas.
 obras_registradas_1 <- mutate(obras_registradas, comuna=as.factor(comuna), tipo_obra=as.factor(tipo_obra))
-##A continuación filtraré los permisos de demolicion registrados.
-demoliciones <- filter(obras_registradas_1, tipo_obra=="PERMISO DE DEMOLICION")
+##A continuación filtraré los permisos de demolicion registrados y eliminare las filas en las cuales las comunas no estan identificadas.
+demoliciones <- filter(obras_registradas_1, tipo_obra=="PERMISO DE DEMOLICION") %>% 
+  drop_na()
 ## Para poder contar, agrupare por comuna y contare las demoliciones registradas.
 demoliciones_por_comuna <- demoliciones %>%
   group_by(comuna) %>%
   summarise(tipo_obra=n())
+
+demoliciones_por_comuna %>% 
+  top_n(3) 
 ##La comuna con mas demoliciones registradas es la Comuna 11. Ahora quiero saber cual es el promedio de demoliciones por comunas.
 mean(demoliciones_por_comuna$tipo_obra)
-##El promedio de demoliciones es de 81,37.
+##El promedio de demoliciones es de 84,93.
+
